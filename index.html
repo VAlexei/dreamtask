@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.5">
+	<title>ML</title>
+	
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script src="checker/fons.js"></script>
+<script src="checker/p_bar.js"></script>
+<script src="checker/main_task.js"></script>
+<script src="checker/tab_eff.js"></script>
+<link rel="stylesheet" href="checker/checker_mob.css">
+ <link rel="shortcut icon" href="checker/img/favicon.ico" type="image/x-icon">
+</head>
+<body>
+<!--  v-bind:style="{'background-image':fonnow}" -->
+<!-- Creating by Alexey Valchuk alexnadmirom@gmail.com -->
+<div id="tasktabs" v-bind:style="{'background-image':fonnow}">
+  <!-- <div class="logo"></div> -->
+<div class="container desk col-md-12 col-lg-8">
+  <div class="row">
+    <div class="col-sm-12">
+      <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li v-for="(tabtask, n) in tabtasks"  v-on:click="changeOpenTab(tabtask.idtab)" class="nav-item" v-bind:tabnum="tabtask.idtab">
+            <a :href="'#'+ tabtask.idtab" role="tab" data-toggle="tab" class="nav-link" :class="{'active': tabtask.opentab }">{{ tabtask.name }}</a>
+          </li>
+           <li class="nav-item">
+            <a role="tab" data-toggle="tab" class="nav-link" v-on:click="addtabshow = !addtabshow"
+            :class="{'active': addtabshow }">
+            <button v-show="addtabshow" class="btn btn-light">
+            <i v-show="addtabshow" class="fa fa-minus-circle green fa-2x" aria-hidden="true"></i>
+            </button>
+            <button v-show="!addtabshow" class="btn btn-light">
+             <i class="fa fa-plus-circle blue-2 fa-2x" aria-hidden="true" v-on:click="addTabTask"></i>
+            </button> 
+            </a>
+          </li>
+        </ul>
+        <div class="tab-content" v-show="!addtabshow" style="padding-bottom: 2vh">
+
+          <div v-for="(tabtask, n) in tabtasks" role="tabpanel" :class="{'active': tabtask.opentab }" class="tab-pane" :id="tabtask.idtab">
+            <!-- {{ tabtask.name }} -->
+
+            <main-task :key="tabtask.idtab"  v-bind:idtab="tabtask.idtab" @numdeltab="removeTabTask" @mainfon="changefons"></main-task>
+     
+          </div>
+        </div>
+
+    </div>
+  </div>
+
+<div v-show="addtabshow" class="input-group mb-3" style="padding: 2vh">
+  <input type="text" class="form-control" placeholder="Название вкладки.." v-model="newTabTask" @keyup.enter="addTabTask">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button" v-on:click="addTabTask">ДОБАВИТЬ</button>
+  </div>
+</div>
+
+</div>
+</div>
+<script>
+//  var data = JSON.stringify(localStorage);
+//console.log(data);
+</script>
+<script>
+new Vue({
+  el: '#tasktabs',
+  data:{
+    //будущая пропс для хранения id темы(группы задач-вкладки)
+    idtab: 1,
+    //массив больших задач
+    tabtasks:[],
+       //опция для хранения вводимого пользователем названия новой вкладки задач/группы задач
+    newTabTask:'',
+  //адишник последней большой задачи 
+    idMaxTabStor: '',
+//храним имя текущего пользователя , чтобы именовать автора темы/группы задач 
+    myNameIS: '',
+//свойство для показа кнопки удалить вкладку
+    deltabshow: 0,
+//свойство для показа кнопки добавить вкладку (и скрыть остальное)   
+    addtabshow: 0,
+//свойство для установки фона на главный див
+    fonnow:'url("/checker/img/Desk.jpg")'
+  },
+//Сначала загружаем из ЛС массив больших задач
+   mounted: function() {
+      if (localStorage.getItem('tabtasks')) {
+      try {
+        this.tabtasks = JSON.parse(localStorage.getItem('tabtasks'));
+      } catch(e) {
+        console.error();
+      }
+    }
+//и номер последней добавленной вкладки/группы/темы задач
+      if (localStorage.getItem('idMaxTabStor')) {
+      try {
+        this.idMaxTabStor = JSON.parse(localStorage.getItem('idMaxTabStor'));
+      } catch(e) {
+        console.error();
+      }
+    }else{
+      this.idMaxTabStor = 0;
+    }
+//Также создадим в ЛС переменную с именем текущего пользователя(задел на будущее)
+//потом эту переменную нужно будет завязать на авторизацию..
+    localStorage.setItem('MyNameIS', 'valchukas');
+    this.myNameIS = localStorage.getItem('MyNameIS');
+//Так же загрузим-установим фон если его уже выбирали
+    if (localStorage.getItem('checkerfon')) {
+      try {
+        this.fonnow = JSON.parse(localStorage.getItem('checkerfon'));
+        console.log(this.fonnow);
+
+      } catch(e) {
+        console.error();
+      }
+    }
+    
+  }, 
+  watch: {
+      tabtasks: function(){
+         this.saveTabTask();
+      }
+   },
+//Методы:
+  methods: {
+    changefons(fonsave){
+      console.log("fonfinal" + fonsave);
+      this.fonnow = JSON.parse(localStorage.getItem('checkerfon'));
+    },
+//############# Mетод добавления новой вкладки задач ########################
+    addTabTask: function(){
+  // убедимся, что было что-либо введено
+          if (!this.newTabTask){
+            return;
+         }
+  //увеличим номер последней вкладки на 1       
+        var newid = this.idMaxTabStor + 1;
+  //добавим в массив запись о новой вкладке
+        this.tabtasks.push({idtab: newid, name: this.newTabTask, opentab: false});
+  //обновим открытую вкладку в (tabtasks.opentab) 
+        this.changeOpenTab(newid);
+    //очистим поле ввода имен новых вкладок    
+        this.newTabTask = '';
+    //и скроем форму ввода новой вкладки    
+        this.addtabshow = 0;
+    //сохраняем новый последний айдишник в свойстве idMaxTabStor
+        this.idMaxTabStor = newid;
+    //сохраняем вкладки задач в локал сторадж
+         const parsTTasks = JSON.stringify(this.tabtasks);
+         localStorage.setItem('tabtasks', parsTTasks);
+        //сохраняем айдишник новой вкладки в ЛС
+         localStorage.setItem('idMaxTabStor', this.idMaxTabStor);
+    },
+    //###################УДАЛЕНИЕ вкладок ЗАДАЧ#################################
+      //Общий метод для удаления вкладок задач (везде)
+      removeTabTask(x) {
+                   //если удаляется первая вкладка, активной делаем вторую, если она есть
+                      if (this.tabtasks[0].idtab == x && this.tabtasks.length > 1) {
+                        this.tabtasks[1].opentab = true;
+                        //если же вкладка последняя..
+                      } else if (this.tabtasks.length == 1){
+                        console.log('Последняя вкладка!');
+                        //если их много
+
+                      } else {
+                         //здесь нужно активировать предыдущую вкладку
+                      for (var t = 1; t < this.tabtasks.length; t++) {
+                      if ( this.tabtasks[t].idtab == x ) {
+                         this.tabtasks[t-1].opentab = true;
+                      }else{
+                        //остальные закрываем:
+                        this.tabtasks[t].opentab = false;
+                        }
+                      }
+                    }       
+                 console.log('Удаляем TabTask №: ' + x);
+        //Пропускаем через фильтр массив вкладок, чтобы оставить все, кроме удаляемой
+                    this.tabtasks = this.tabtasks.filter(item => item.idtab !== x);
+                    //и сохраняем его в ЛС
+                     this.saveTabTask(); 
+
+                  //чистим хвосты в ЛС.. удаляем все задачи и подзадачи связанные с этой вкладкой
+                  var n = x;
+                  console.log(n);
+                  var delmaintasks = n + "maintasks";
+                   const arrdeltask = JSON.parse(localStorage.getItem(delmaintasks));
+                   if(!arrdeltask){
+                     console.log('Все чисто! Задач не было.');
+                   } else{
+                   for (var i = 1; i <= arrdeltask.length; i++) {
+        //определяем и удаляем имя переменной хранящую подзадачи задач из удаляемой вкладки              
+                    var deltasks = n + "tasks" + i;
+                    localStorage.removeItem(deltasks);
+                    }
+                    localStorage.removeItem(delmaintasks);
+                   }
+                      
+                      var delidMTaskStor = n + "idMTaskStor";
+                        localStorage.removeItem(delidMTaskStor); 
+                  },
+   
+      //метод для сохранения массива  задач tabtasks в локал сторадж
+      saveTabTask() {
+                     const parsTTasks = JSON.stringify(this.tabtasks);
+                    localStorage.setItem('tabtasks', parsTTasks);
+                    },
+//####################Запоминаем какая вкладка была открыта .open##################################       
+      changeOpenTab(x){
+          if(this.addtabshow == 1){
+          this.addtabshow = 0;
+          }
+        for (var t = 0; t < this.tabtasks.length; t++) {
+          if (this.tabtasks[t].idtab == x) {
+            console.log('Открыта вкладка c idtab № ' + x);
+             this.tabtasks[t].opentab = true;
+             //и сохраняем в ЛС
+             const parsTTasks = JSON.stringify(this.tabtasks);
+              localStorage.setItem('tabtasks', parsTTasks);
+          } else {
+            //остальные закрываем:
+            this.tabtasks[t].opentab = false;
+             const parsTTasks = JSON.stringify(this.tabtasks);
+              localStorage.setItem('tabtasks', parsTTasks);
+          }
+        }
+     
+      }
+//######################################################      
+  }
+});
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script>alert("Внимание! Сайт работает в тестовом режиме! Благодарим за смелость и желаем приятного пользования. Если будут вопросы - пиши нам на goodformail@mail.ru");
+</script>
+</body>
+</html>
