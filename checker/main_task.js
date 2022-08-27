@@ -289,7 +289,7 @@ return{
                           <i v-show="this.energy == 1" class="fa fa-battery-1 gray fa-2x" aria-hidden="true"></i>
                           <i v-show="this.energy == 2" class="fa fa-battery-2 gray fa-2x" aria-hidden="true"></i>
                           <i v-show="this.energy == 3" class="fa fa-battery-3 gray fa-2x" aria-hidden="true"></i>
-                          <i v-show="this.energy == 4" class="fa fa-battery-4 green fa-2x" aria-hidden="true"></i>
+                          <i v-show="this.energy == 4" class="fa fa-battery-4 gray fa-2x" aria-hidden="true"></i>
                     </button> 
 
                   </div>
