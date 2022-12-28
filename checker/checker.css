@@ -295,3 +295,14 @@ input[type="checkbox"] {
 input[type=checkbox]:checked {
 	background-color: green !important;
 }
+
+
+
+/*Убрать полосу прокрутки для всей страницы*/
+::-webkit-scrollbar {
+	width: 0;
+}
+
+.element::-webkit-scrollbar {
+	width: 0;
+}
