@@ -1,274 +1,284 @@
-Vue.component('main-task', {
+Vue.component("main-task", {
   props: {
-    idtab: Number
+    idtab: Number,
   },
-  data: function() {
-
-return{ 
- //массив больших задач
-    maintasks:[],
-    //опция для хранения вводимого пользователем названия задачи
-    newMtask:'',
-  //адишник последней большой задачи 
-    idMTaskStor: '',
-    open:[],
-    //свойство с моим именем-пригодиться
-    myNameIS: '!',
-    //свойство для показа кнопки удалить вкладку
-    deltabshow: 0,
-    //свойство для показа верхнего поля ввода большой задачи
-    adduptask: 0,
-    //свойство для общих процентов выполнения всех задач во вкладке
-    procmt:'1',
-    //свойство для отправки сигнала в tab-eff меняется когда кто-то чекает з. или подз..
-    change: false,
-    //Свойство для открытия и закрытия общей эффективности
-    effwatch: false,
-    energy: 0,
-    //свойство для хранения массива подзадач при дублировании
-    oldtsks:[]
-    }
+  data: function () {
+    return {
+      //массив больших задач
+      maintasks: [],
+      //опция для хранения вводимого пользователем названия задачи
+      newMtask: "",
+      //адишник последней большой задачи
+      idMTaskStor: "",
+      open: [],
+      //свойство с моим именем-пригодиться
+      myNameIS: "!",
+      //свойство для показа кнопки удалить вкладку
+      deltabshow: 0,
+      //свойство для показа верхнего поля ввода большой задачи
+      adduptask: 0,
+      //свойство для общих процентов выполнения всех задач во вкладке
+      procmt: "1",
+      //свойство для отправки сигнала в tab-eff меняется когда кто-то чекает з. или подз..
+      change: false,
+      //Свойство для открытия и закрытия общей эффективности
+      effwatch: false,
+      energy: 0,
+      //свойство для хранения массива подзадач при дублировании
+      oldtsks: [],
+    };
   },
 
   //Сначала загружаем из ЛС массив больших задач
-   mounted: function() {
-      if (localStorage.getItem(this.idtab + 'maintasks')) {
+  mounted: function () {
+    if (localStorage.getItem(this.idtab + "maintasks")) {
       try {
-        this.maintasks = JSON.parse(localStorage.getItem(this.idtab + 'maintasks'));
-      } catch(e) {
+        this.maintasks = JSON.parse(
+          localStorage.getItem(this.idtab + "maintasks")
+        );
+      } catch (e) {
         console.error();
       }
     }
-//и номер последней добавленной большой задачи
-      if (localStorage.getItem(this.idtab + 'idMTaskStor')) {
+    //и номер последней добавленной большой задачи
+    if (localStorage.getItem(this.idtab + "idMTaskStor")) {
       try {
-        this.idMTaskStor = JSON.parse(localStorage.getItem(this.idtab + 'idMTaskStor'));
-      } catch(e) {
+        this.idMTaskStor = JSON.parse(
+          localStorage.getItem(this.idtab + "idMTaskStor")
+        );
+      } catch (e) {
         console.error();
       }
-    }else{
+    } else {
       this.idMTaskStor = 0;
     }
-//Также создадим в ЛС переменную с именем текущего пользователя(задел на будущее)
-//потом эту переменную нужно будет завязать на авторизацию
-    localStorage.setItem('MyNameIS', '!');
-    this.myNameIS = localStorage.getItem('MyNameIS');
-  }, 
+    //Также создадим в ЛС переменную с именем текущего пользователя(задел на будущее)
+    //потом эту переменную нужно будет завязать на авторизацию
+    localStorage.setItem("MyNameIS", "!");
+    this.myNameIS = localStorage.getItem("MyNameIS");
+  },
 
-  methods:{
-
-    sendDelTabTask(){
-      this.$emit('numdeltab', this.idtab);
+  methods: {
+    sendDelTabTask() {
+      this.$emit("numdeltab", this.idtab);
     },
-    effchange(){
+    effchange() {
       this.change = !this.change;
-      console.log('effchange:' + this.change);
+      console.log("effchange:" + this.change);
     },
     //Метод для смены значка энергии..получает проценты по эмету из tab_eff
-    effprocenergy(x){
-        console.log('effprocenergy:' + x);
-                switch (x) {
-          case 0:
-            this.energy = 0;
-            break;
-          case 1:
-            this.energy = 1;
-            break;
-          case 2:
-           this.energy = 2;
-            break;
-          case 3:
-            this.energy = 3;
-            break;
-          case 4:
-            this.energy = 4;
-            break;
-          default:
-           this.energy = 0;
-        }
+    effprocenergy(x) {
+      console.log("effprocenergy:" + x);
+      switch (x) {
+        case 0:
+          this.energy = 0;
+          break;
+        case 1:
+          this.energy = 1;
+          break;
+        case 2:
+          this.energy = 2;
+          break;
+        case 3:
+          this.energy = 3;
+          break;
+        case 4:
+          this.energy = 4;
+          break;
+        default:
+          this.energy = 0;
+      }
     },
 
-    newFons(fonsave){
-    //   if (localStorage.getItem('checkerfon')) {
-    //   try {
-    //     var fonsnow = JSON.parse(localStorage.getItem('checkerfon'));
-    //   } catch(e) {
-    //     console.error();
-    //   }
-    // }
-    console.log("foninmain" + fonsave);
+    newFons(fonsave) {
+      //   if (localStorage.getItem('checkerfon')) {
+      //   try {
+      //     var fonsnow = JSON.parse(localStorage.getItem('checkerfon'));
+      //   } catch(e) {
+      //     console.error();
+      //   }
+      // }
+      console.log("foninmain" + fonsave);
 
-      this.$emit('mainfon', fonsave);
-      
+      this.$emit("mainfon", fonsave);
     },
 
-   //метод для сохранения массива  задач maintasks в локал сторадж
-    saveMainTask: function() {
-        const parsMTasks = JSON.stringify(this.maintasks);
-         localStorage.setItem(this.idtab + 'maintasks', parsMTasks);
-      },
+    //метод для сохранения массива  задач maintasks в локал сторадж
+    saveMainTask: function () {
+      const parsMTasks = JSON.stringify(this.maintasks);
+      localStorage.setItem(this.idtab + "maintasks", parsMTasks);
+    },
 
-//метод добавления новой большой задачи
-    addMainTask: function(){
-  // убедимся, что было что-либо введено
-          if (!this.newMtask){
-            return;
-         }
-        var newid = this.idMTaskStor + 1;
-        // this.maintasks.push({idmtask: newid, name: this.newMtask, open: true, full: false});
-        this.maintasks.unshift({idmtask: newid, name: this.newMtask, open: true, full: false});
-        this.newMtask = '';
+    //метод добавления новой большой задачи
+    addMainTask: function () {
+      // убедимся, что было что-либо введено
+      if (!this.newMtask) {
+        return;
+      }
+      var newid = this.idMTaskStor + 1;
+      // this.maintasks.push({idmtask: newid, name: this.newMtask, open: true, full: false});
+      this.maintasks.unshift({
+        idmtask: newid,
+        name: this.newMtask,
+        open: true,
+        full: false,
+      });
+      this.newMtask = "";
       //созраняем новый последний айдишник большой задачи в этой вкладке в свойстве idMTaskStor
-        this.idMTaskStor = newid;
-      //Запускаем пересчет общей эффективности  
-        this.change = !this.change;
+      this.idMTaskStor = newid;
+      //Запускаем пересчет общей эффективности
+      this.change = !this.change;
       //сохраняем большие задачи в локал сторадж
-       this.saveMainTask();
+      this.saveMainTask();
       //сохраняем айдишник новой задачи в ЛС
-         localStorage.setItem(this.idtab + 'idMTaskStor', this.idMTaskStor);
+      localStorage.setItem(this.idtab + "idMTaskStor", this.idMTaskStor);
     },
     //метод добавления новой большой задачи снизу
-    addMainTaskDown: function(){
-  // убедимся, что было что-либо введено
-          if (!this.newMtask){
-            return;
-         }
-        var newid = this.idMTaskStor + 1;
-        this.maintasks.push({idmtask: newid, name: this.newMtask, open: true, full: false});
-        // this.maintasks.unshift({idmtask: newid, name: this.newMtask, open: true, full: false});
-        this.newMtask = '';
+    addMainTaskDown: function () {
+      // убедимся, что было что-либо введено
+      if (!this.newMtask) {
+        return;
+      }
+      var newid = this.idMTaskStor + 1;
+      this.maintasks.push({
+        idmtask: newid,
+        name: this.newMtask,
+        open: true,
+        full: false,
+      });
+      // this.maintasks.unshift({idmtask: newid, name: this.newMtask, open: true, full: false});
+      this.newMtask = "";
       //созраняем новый последний айдишник большой задачи в этой вкладке в свойстве idMTaskStor
-        this.idMTaskStor = newid;
-      //Запускаем пересчет общей эффективности  
-        this.change = !this.change;
+      this.idMTaskStor = newid;
+      //Запускаем пересчет общей эффективности
+      this.change = !this.change;
       //сохраняем большие задачи в локал сторадж
-       this.saveMainTask();
+      this.saveMainTask();
       //сохраняем айдишник новой задачи в ЛС
-         localStorage.setItem(this.idtab + 'idMTaskStor', this.idMTaskStor);
+      localStorage.setItem(this.idtab + "idMTaskStor", this.idMTaskStor);
     },
-//###################УДАЛЕНИЕ БОЛЬШИХ ЗАДАЧ#################################
-      //Общий метод для удаления ,больших задач (везде)
-      removeMainTask(tnum) {
-          console.log('Номер БЗ: ' + tnum);
-        // this.maintasks.splice(tnum, 1);
-        this.maintasks = this.maintasks.filter(item => item.idmtask !== tnum);
-        //Запускаем пересчет общей эффективности  
-        this.change = !this.change;
-        this.saveMainTask();
+    //###################УДАЛЕНИЕ БОЛЬШИХ ЗАДАЧ#################################
+    //Общий метод для удаления ,больших задач (везде)
+    removeMainTask(tnum) {
+      console.log("Номер БЗ: " + tnum);
+      // this.maintasks.splice(tnum, 1);
+      this.maintasks = this.maintasks.filter((item) => item.idmtask !== tnum);
+      //Запускаем пересчет общей эффективности
+      this.change = !this.change;
+      this.saveMainTask();
 
-         var audio = new Audio('/checker/sound/bankai_kuchiki.mp3');
-              audio.play();
-
-      },
-//Метод для поднятия БЗ получает id большой задачи по эмету из p_bars
-      sendidupmt(mtnum){
-        console.log("Поднимаем БЗ с id! " + mtnum);
-        if(this.maintasks[0].idmtask != mtnum){
-
-          var s = 0;
-          while( this.maintasks[s].idmtask != mtnum){
+      var audio = new Audio("/checker/sound/bankai_kuchiki.mp3");
+      audio.play();
+    },
+    //Метод для поднятия БЗ получает id большой задачи по эмету из p_bars
+    sendidupmt(mtnum) {
+      console.log("Поднимаем БЗ с id! " + mtnum);
+      if (this.maintasks[0].idmtask != mtnum) {
+        var s = 0;
+        while (this.maintasks[s].idmtask != mtnum) {
           s++;
+        }
+        console.log("Поднимаем элемент maintasks № " + s);
+        var arr = this.maintasks;
+        arr[s - 1] = [arr[s], (arr[s] = arr[s - 1])][0];
+        this.maintasks = arr;
+        //След 2 строчки чтобы показать вью , что массив изменился
+        //можно будет заменить на что-то более адекватное
+        this.maintasks[s].full = !this.maintasks[s].full;
+        this.maintasks[s].full = !this.maintasks[s].full;
+        this.saveMainTask();
+      }
+    },
+    //Метод для спуска БЗ получает id большой задачи по эмету из p_bars
+    sendiddownmt(mtnum) {
+      var s = 0;
+      while (this.maintasks[s].idmtask != mtnum) {
+        s++;
+      }
+      console.log("Элемент s: " + mtnum);
+      if (s != this.maintasks.length - 1) {
+        console.log("Спускаем элемент maintasks № " + s);
+        var arr = this.maintasks;
+        arr[s + 1] = [arr[s], (arr[s] = arr[s + 1])][0];
+        this.maintasks = arr;
+        //След 2 строчки чтобы показать вью , что массив изменился
+        //можно будет заменить на что-то более адекватное
+        this.maintasks[s].full = !this.maintasks[s].full;
+        this.maintasks[s].full = !this.maintasks[s].full;
+        this.saveMainTask();
+      }
+    },
+    //Метод для дублирования больших задач(только имен)
+    sendmnaruto(mtnum) {
+      console.log("sendmnaruto" + mtnum);
+      console.log("Вкладка №" + this.idtab);
+      //Здесь нужно дописать код для дублирования
+      //1 знаем номер последней задачи
+      var lustmt = this.idMTaskStor + 1;
+      for (var k = 0; k < this.maintasks.length; k++) {
+        if (this.maintasks[k].idmtask == mtnum) {
+          console.log("БИНГО2 " + mtnum);
+          var lustmt = this.idMTaskStor;
+          this.maintasks.splice(k + 1, 0, {
+            idmtask: lustmt + 1,
+            name: this.maintasks[k].name,
+            open: true,
+            full: false,
+          });
+
+          //так же дублируем все подзадачи
+          var oldtasksname = this.idtab + "tasks" + mtnum;
+          this.oldtsks = JSON.parse(localStorage.getItem(oldtasksname));
+          for (var z = 0; z < this.oldtsks.length; z++) {
+            this.oldtsks[z].inwrk = false;
+            this.oldtsks[z].whoinwork = "";
+            this.oldtsks[z].check = false;
           }
-        console.log("Поднимаем элемент maintasks № " + s); 
-          var arr=this.maintasks;
-          arr[s-1] = [arr[s], arr[s] = arr[s-1]][0];
-          this.maintasks = arr;
-          //След 2 строчки чтобы показать вью , что массив изменился 
-          //можно будет заменить на что-то более адекватное
-          this.maintasks[s].full = !this.maintasks[s].full;
-          this.maintasks[s].full = !this.maintasks[s].full;
+          var oldtsk = JSON.stringify(this.oldtsks);
+          var newtskname = this.idtab + "tasks" + (lustmt + 1);
+          localStorage.setItem(newtskname, oldtsk);
+
+          var audio = new Audio("/checker/sound/kakashi.mp3");
+          audio.play();
+          // this.maintasks[k].open = !this.maintasks[k].open;
+          //и сохраняем в ЛС
+          this.idMTaskStor = lustmt + 1;
+          var idMTaskStor = this.idtab + "idMTaskStor";
+          localStorage.setItem(idMTaskStor, this.idMTaskStor);
           this.saveMainTask();
         }
+      }
+    },
 
-      },
-      //Метод для спуска БЗ получает id большой задачи по эмету из p_bars
-      sendiddownmt(mtnum){
-          var s = 0;
-          while ( this.maintasks[s].idmtask != mtnum){  
-            s++;
-          }
-          console.log("Элемент s: " + mtnum);
-          if ( s != this.maintasks.length - 1){
-          console.log("Спускаем элемент maintasks № " + s); 
-          var arr = this.maintasks;
-          arr[s+1] = [arr[s], arr[s] = arr[s+1]][0];
-          this.maintasks = arr;
-          //След 2 строчки чтобы показать вью , что массив изменился 
-          //можно будет заменить на что-то более адекватное
-          this.maintasks[s].full = !this.maintasks[s].full;
-          this.maintasks[s].full = !this.maintasks[s].full;
+    //####################Запоминаем какие задачи были закрыты .open##################################
+    changeOpenTask(tnum) {
+      for (var k = 0; k < this.maintasks.length; k++) {
+        if (this.maintasks[k].idmtask == tnum) {
+          console.log("БИНГО!!! " + tnum);
+          this.maintasks[k].open = !this.maintasks[k].open;
+          //и сохраняем в ЛС
           this.saveMainTask();
-         }
-      
-      },
-      //Метод для дублирования больших задач(только имен)
-      sendmnaruto(mtnum){
-        console.log("sendmnaruto" + mtnum);
-        console.log("Вкладка №" + this.idtab);
-        //Здесь нужно дописать код для дублирования
-        //1 знаем номер последней задачи
-        var lustmt = this.idMTaskStor + 1;
-          for (var k = 0; k < this.maintasks.length; k++) {
-          if (this.maintasks[k].idmtask == mtnum) {
-            console.log('БИНГО2 ' + mtnum);
-            var lustmt = this.idMTaskStor;
-            this.maintasks.splice(k + 1, 0, {idmtask: lustmt + 1, name: this.maintasks[k].name, open: true, full: false});
-              
-              //так же дублируем все подзадачи
-              var oldtasksname = this.idtab + "tasks" + mtnum;
-              this.oldtsks = JSON.parse(localStorage.getItem(oldtasksname));
-               for (var z = 0; z < this.oldtsks.length; z++) {
-              this.oldtsks[z].inwrk = false;
-              this.oldtsks[z].whoinwork = "";
-              this.oldtsks[z].check = false;
-              }
-              var oldtsk = JSON.stringify(this.oldtsks);
-              var newtskname = this.idtab + "tasks" + (lustmt + 1);
-              localStorage.setItem(newtskname, oldtsk);
-
-              var audio = new Audio('/checker/sound/kakashi.mp3');
-              audio.play();
-            // this.maintasks[k].open = !this.maintasks[k].open;
-            //и сохраняем в ЛС
-            this.idMTaskStor = lustmt + 1;
-            var idMTaskStor = this.idtab +"idMTaskStor";
-            localStorage.setItem(idMTaskStor, this.idMTaskStor);
-            this.saveMainTask();
-          }
         }
-    
-      },
-       
-//####################Запоминаем какие задачи были закрыты .open##################################       
-      changeOpenTask(tnum){
-        for (var k = 0; k < this.maintasks.length; k++) {
-          if (this.maintasks[k].idmtask == tnum) {
-            console.log('БИНГО!!! ' + tnum);
-             this.maintasks[k].open = !this.maintasks[k].open;
-             //и сохраняем в ЛС
-            this.saveMainTask();
-          }
+      }
+      console.log("Номер open БЗ: " + tnum);
+    },
+    //######################################################
+    numFullchange(tnum) {
+      console.log(tnum);
+      for (var k = 0; k < this.maintasks.length; k++) {
+        if (this.maintasks[k].idmtask == tnum) {
+          console.log("БИНГО!!! " + tnum);
+          this.maintasks[k].full = !this.maintasks[k].full;
+          //и сохраняем в ЛС
+          this.saveMainTask();
         }
-       console.log('Номер open БЗ: ' + tnum);
-      },
-//######################################################  
-      numFullchange(tnum){
-        console.log(tnum);
-        for (var k = 0; k < this.maintasks.length; k++) {
-          if (this.maintasks[k].idmtask == tnum) {
-            console.log('БИНГО!!! ' + tnum);
-             this.maintasks[k].full = !this.maintasks[k].full;
-             //и сохраняем в ЛС
-            this.saveMainTask();
-          }
-        }
-
-      }    
+      }
+    },
   },
   // computed:{
 
   // },
-  template:`
+  template: `
 
     <div id="app1">
           <div class="row navbar navbar-expand-lg navbar-light bg-light justify-content-between  border_up" style="padding: 1vh">
@@ -348,6 +358,5 @@ return{
               </div>
     
     </div>
-  `
-  
+  `,
 });
