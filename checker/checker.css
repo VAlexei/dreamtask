@@ -123,10 +123,10 @@ a:hover {
 .desk {
 	background-color: white;
 	padding-top: 1vh;
-	box-shadow: 0px 0px 1px 2px #89888f;
+	box-shadow: 0px 0px 1px 1px #89888f;
 	width: 100vw;
 	opacity: 0.96;
-	border-radius: 5px;
+	border-radius: 3vh;
 	/* немного уменьшим масштаб */
 	zoom: 70%;
 }
@@ -207,6 +207,7 @@ a:hover {
 		padding: 0.5vh;
 		padding-left: 1.6vh;
 	}
+
 
 }
 
