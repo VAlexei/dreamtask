@@ -307,12 +307,12 @@ Vue.component("main-task", {
                 </div>
                                
               </div>
-              <div id="menu1" class="col-sm-3 col-md-2" style="padding-left: 5vw">
+              <div id="menu1" class="col-sm-3 col-md-2" style="padding-left: 2vw">
                       <button v-show="deltabshow" class="btn btn-outline-danger" v-on:click="sendDelTabTask(this.idtab)" style="padding-left: 1vh">
                       <i class="fa fa-trash-o" aria-hidden="true"></i> ВКЛАДКУ! 
                       </button>
 
-            <fon-menu @newfon="newFons"></fon-menu>
+            <fon-menu v-show="!deltabshow" @newfon="newFons"></fon-menu>
 
 
 
