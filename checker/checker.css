@@ -312,3 +312,7 @@ input[type=checkbox]:checked {
 #menu1 {
 	text-align: end;
 }
+
+.btn-outline-secondary {
+	color: #ffffff;
+}
